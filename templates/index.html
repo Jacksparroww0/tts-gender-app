@@ -366,8 +366,8 @@ Lisa: Ja, hallo Markus! Hier ist Lisa vom IT-Support.</code>
               audioPlayer.className = "w-100 mt-2";
               audioPlayer.style.height = "30px";
 
-              // Ses dosyasının yolunu ayarla (index+1 değerini kullanıyoruz çünkü index 0 birleştirilmiş dosya)
-              if (result.audio_files && index + 1 < result.audio_files.length) {
+              // Ses dosyasının yolunu ayarla - Düzeltildi: Son diyaloğun da ses dosyasını göster
+              if (result.audio_files && result.audio_files.length > 1) {
                 const audioSource = document.createElement("source");
                 audioSource.src = `/audio/${result.session_id}_${index}.mp3`;
                 audioSource.type = "audio/mpeg";
@@ -423,13 +423,6 @@ Lisa: Ja, hallo Markus! Hier ist Lisa vom IT-Support.</code>
 
               // Ses alanını göster
               document.getElementById("audioArea").style.display = "block";
-
-              // Birleştirilmiş ses dosyasını otomatik oynat
-              audioPlayer.addEventListener("loadeddata", function () {
-                audioPlayer
-                  .play()
-                  .catch((e) => console.log("Otomatik oynatma engellendi:", e));
-              });
 
               // Tüm diyalogları sırayla çalma fonksiyonu
               const playAllBtn = document.getElementById("playAllBtn");

@@ -234,9 +234,9 @@
       const htmlElement = document.documentElement;
 
       // Otomatik oynatma seçeneği
-      const autoPlayEnabled = true; // Otomatik oynatma için bu değeri true yapın
+      const autoPlayEnabled = false; // Otomatik oynatma devre dışı
 
-      // Sayfa yüklendiğinde ilk kaydı otomatik oynat
+      // Sayfa yüklendiğinde ilk kaydı otomatik oynat (autoPlayEnabled false olduğu için çalışmayacak)
       document.addEventListener("DOMContentLoaded", function () {
         if (autoPlayEnabled) {
           // İlk kayıt varsa oynat
