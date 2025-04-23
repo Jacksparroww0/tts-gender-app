@@ -94,3 +94,13 @@ MIT
 
 - German voices provided by Microsoft Edge TTS
 - Gender detection powered by gender-guesser
+
+## GitHub Repository
+
+To push your local repository to GitHub, use the following commands:
+
+```
+git remote add origin https://github.com/Jacksparroww0/tts-gender-app.git
+git branch -M main
+git push -u origin main
+```
