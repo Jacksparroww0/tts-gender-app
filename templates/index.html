@@ -184,6 +184,57 @@
                             </button>
                           </div>
 
+                          <!-- Ses Ayarları Paneli -->
+                          <div class="card mb-3">
+                            <div class="card-header bg-secondary text-white">
+                              <h5 class="mb-0 h6">Ses Ayarları</h5>
+                            </div>
+                            <div class="card-body">
+                              <div class="row mb-2">
+                                <div class="col-sm-3">
+                                  <label for="volumeControl" class="form-label"
+                                    >Ses Seviyesi:</label
+                                  >
+                                </div>
+                                <div class="col-sm-7">
+                                  <input
+                                    type="range"
+                                    class="form-range"
+                                    min="0"
+                                    max="1"
+                                    step="0.05"
+                                    value="1"
+                                    id="volumeControl"
+                                  />
+                                </div>
+                                <div class="col-sm-2 text-end">
+                                  <span id="volumeValue">100%</span>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-sm-3">
+                                  <label for="speedControl" class="form-label"
+                                    >Ses Hızı:</label
+                                  >
+                                </div>
+                                <div class="col-sm-7">
+                                  <input
+                                    type="range"
+                                    class="form-range"
+                                    min="0.5"
+                                    max="2"
+                                    step="0.1"
+                                    value="1"
+                                    id="speedControl"
+                                  />
+                                </div>
+                                <div class="col-sm-2 text-end">
+                                  <span id="speedValue">1.0x</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
                           <audio
                             controls
                             id="combinedAudioPlayer"
@@ -363,7 +414,7 @@ Lisa: Ja, hallo Markus! Hier ist Lisa vom IT-Support.</code>
               // Ses oynatıcı (bireysel)
               const audioPlayer = document.createElement("audio");
               audioPlayer.controls = true;
-              audioPlayer.className = "w-100 mt-2";
+              audioPlayer.className = "w-100 mt-2 individual-audio-player";
               audioPlayer.style.height = "30px";
 
               // Ses dosyasının yolunu ayarla - Düzeltildi: Son diyaloğun da ses dosyasını göster
@@ -423,6 +474,9 @@ Lisa: Ja, hallo Markus! Hier ist Lisa vom IT-Support.</code>
 
               // Ses alanını göster
               document.getElementById("audioArea").style.display = "block";
+
+              // Ses ayarlarını uygula
+              applyAudioSettings();
 
               // Tüm diyalogları sırayla çalma fonksiyonu
               const playAllBtn = document.getElementById("playAllBtn");
@@ -484,6 +538,46 @@ Lisa: Ja, hallo Markus! Hier ist Lisa vom IT-Support.</code>
             submitBtn.innerHTML = "Seslendirmeyi Başlat";
           }
         });
+
+      // Ses ayarları kontrolleri
+      const volumeControl = document.getElementById("volumeControl");
+      const speedControl = document.getElementById("speedControl");
+      const volumeValue = document.getElementById("volumeValue");
+      const speedValue = document.getElementById("speedValue");
+
+      // Ses seviyesi değiştiğinde
+      volumeControl.addEventListener("input", function () {
+        volumeValue.textContent = Math.round(this.value * 100) + "%";
+        applyAudioSettings();
+      });
+
+      // Ses hızı değiştiğinde
+      speedControl.addEventListener("input", function () {
+        speedValue.textContent = this.value + "x";
+        applyAudioSettings();
+      });
+
+      // Tüm ses oynatıcılara ayarları uygula
+      function applyAudioSettings() {
+        const volume = volumeControl.value;
+        const speed = speedControl.value;
+
+        // Ana oynatıcıya ayarları uygula
+        const mainPlayer = document.getElementById("combinedAudioPlayer");
+        if (mainPlayer) {
+          mainPlayer.volume = volume;
+          mainPlayer.playbackRate = speed;
+        }
+
+        // Tüm bireysel oynatıcılara ayarları uygula
+        const individualPlayers = document.querySelectorAll(
+          ".individual-audio-player"
+        );
+        individualPlayers.forEach((player) => {
+          player.volume = volume;
+          player.playbackRate = speed;
+        });
+      }
     </script>
   </body>
 </html>

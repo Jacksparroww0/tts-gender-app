@@ -190,9 +190,67 @@
                         Çal
                       </button>
                     </div>
+
+                    <!-- Ses Ayarları Paneli -->
+                    <div class="card mb-3">
+                      <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0 h6">Ses Ayarları</h5>
+                      </div>
+                      <div class="card-body">
+                        <div class="row mb-2">
+                          <div class="col-sm-3">
+                            <label
+                              for="volumeControl{{ loop.index }}"
+                              class="form-label"
+                              >Ses Seviyesi:</label
+                            >
+                          </div>
+                          <div class="col-sm-7">
+                            <input
+                              type="range"
+                              class="form-range volume-control"
+                              min="0"
+                              max="1"
+                              step="0.05"
+                              value="1"
+                              id="volumeControl{{ loop.index }}"
+                              data-recording-id="{{ recording.session_id }}"
+                            />
+                          </div>
+                          <div class="col-sm-2 text-end">
+                            <span class="volume-value">100%</span>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-sm-3">
+                            <label
+                              for="speedControl{{ loop.index }}"
+                              class="form-label"
+                              >Ses Hızı:</label
+                            >
+                          </div>
+                          <div class="col-sm-7">
+                            <input
+                              type="range"
+                              class="form-range speed-control"
+                              min="0.5"
+                              max="2"
+                              step="0.1"
+                              value="1"
+                              id="speedControl{{ loop.index }}"
+                              data-recording-id="{{ recording.session_id }}"
+                            />
+                          </div>
+                          <div class="col-sm-2 text-end">
+                            <span class="speed-value">1.0x</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                     <audio
                       controls
-                      class="w-100 mb-3"
+                      class="w-100 mb-3 main-audio-player"
                       onerror="this.parentElement.innerHTML = '<div class=\'alert alert-danger\'>Ses dosyası yüklenemedi</div>'"
                     >
                       <source
@@ -359,6 +417,53 @@
             // Sesi çal
             player.play();
           }
+        });
+      });
+
+      // Ses ayarları kontrolü
+      document.querySelectorAll(".volume-control").forEach((control) => {
+        control.addEventListener("input", function () {
+          const recordingId = this.getAttribute("data-recording-id");
+          const cardBody = this.closest(".card-body");
+          const volumeValue = cardBody.querySelector(".volume-value");
+          volumeValue.textContent = Math.round(this.value * 100) + "%";
+
+          // Ana oynatıcıya uygula
+          const mainPlayer = cardBody.querySelector(".main-audio-player");
+          if (mainPlayer) {
+            mainPlayer.volume = this.value;
+          }
+
+          // Bireysel oynatıcılara uygula
+          const individualPlayers = cardBody.querySelectorAll(
+            ".individual-audio audio"
+          );
+          individualPlayers.forEach((player) => {
+            player.volume = this.value;
+          });
+        });
+      });
+
+      document.querySelectorAll(".speed-control").forEach((control) => {
+        control.addEventListener("input", function () {
+          const recordingId = this.getAttribute("data-recording-id");
+          const cardBody = this.closest(".card-body");
+          const speedValue = cardBody.querySelector(".speed-value");
+          speedValue.textContent = this.value + "x";
+
+          // Ana oynatıcıya uygula
+          const mainPlayer = cardBody.querySelector(".main-audio-player");
+          if (mainPlayer) {
+            mainPlayer.playbackRate = this.value;
+          }
+
+          // Bireysel oynatıcılara uygula
+          const individualPlayers = cardBody.querySelectorAll(
+            ".individual-audio audio"
+          );
+          individualPlayers.forEach((player) => {
+            player.playbackRate = this.value;
+          });
         });
       });
     </script>
