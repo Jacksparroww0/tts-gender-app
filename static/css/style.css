@@ -1,0 +1,90 @@
+body {
+    background-color: #f8f9fa;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    border-bottom: 0;
+}
+
+textarea {
+    resize: vertical;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+#dialogResult strong {
+    color: #0d6efd;
+}
+
+/* Dark mode styles */
+.dark-mode {
+    background-color: #212529;
+    color: #f8f9fa;
+}
+
+.dark-mode .card {
+    background-color: #343a40;
+    color: #f8f9fa;
+    border-color: #495057;
+}
+
+.dark-mode .form-control {
+    background-color: #2b3035;
+    color: #f8f9fa;
+    border-color: #495057;
+}
+
+.dark-mode #dialogResult strong {
+    color: #6ea8fe;
+}
+
+.dark-mode .bg-light {
+    background-color: #343a40 !important;
+    color: #f8f9fa !important;
+}
+
+.dark-mode pre, .dark-mode code {
+    background-color: #2b3035 !important;
+    color: #f8f9fa !important;
+}
+
+/* Audio controls styling */
+.audio-item {
+    margin-bottom: 8px;
+}
+
+.audio-item button {
+    width: 100%;
+    text-align: left;
+    padding: 8px 15px;
+    transition: all 0.3s ease;
+}
+
+#audioControls {
+    margin-top: 15px;
+}
+
+#playAllBtn {
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+/* Theme toggle button */
+#themeToggle {
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dark-mode #themeToggle {
+    border-color: #adb5bd;
+    color: #f8f9fa;
+} 

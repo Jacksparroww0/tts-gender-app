@@ -1,0 +1,2 @@
+# This file ensures that the uploads directory is included in git
+# even when it's empty. This directory is required for storing audio files. 

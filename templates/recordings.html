@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="tr" data-bs-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kayıtlarım - Diyalog Seslendirme</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+    />
+    <style>
+      body {
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+
+      .dark-mode {
+        background-color: #212529;
+        color: #f8f9fa;
+      }
+
+      .dark-mode .card {
+        background-color: #343a40;
+        color: #f8f9fa;
+      }
+
+      .dark-mode .card-header {
+        border-bottom: 1px solid #495057;
+      }
+
+      .dark-mode .bg-light {
+        background-color: #343a40 !important;
+        color: #f8f9fa !important;
+      }
+
+      .dark-mode .list-group-item {
+        background-color: #343a40;
+        color: #f8f9fa;
+        border-color: #495057;
+      }
+
+      .recording-card {
+        margin-bottom: 20px;
+        transition: transform 0.2s;
+      }
+
+      .recording-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .dialogue-list {
+        max-height: 200px;
+        overflow-y: auto;
+      }
+
+      .dialogue-item.male {
+        border-left: 4px solid #0d6efd;
+      }
+
+      .dialogue-item.female {
+        border-left: 4px solid #dc3545;
+      }
+
+      .dialogue-item.unknown {
+        border-left: 4px solid #6c757d;
+      }
+
+      .nav-main {
+        padding: 10px 0;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #dee2e6;
+      }
+
+      .dark-mode .nav-main {
+        border-bottom-color: #495057;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Üst Menü -->
+    <div class="nav-main">
+      <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <a href="/" class="btn btn-outline-primary me-2">
+              <i class="bi bi-house-door"></i> Ana Sayfa
+            </a>
+            <a href="/recordings" class="btn btn-primary">
+              <i class="bi bi-collection-play"></i> Kayıtlarım
+            </a>
+          </div>
+          <button id="themeToggle" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-moon-stars"></i>
+            <span id="themeText">Karanlık Mod</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container mt-3">
+      <div class="row justify-content-center">
+        <div class="col-md-10">
+          <h1 class="h2 mb-4">Kayıtlarım</h1>
+
+          {% if not recordings %}
+          <div class="alert alert-info">
+            Henüz kaydedilmiş ses dosyası bulunmamaktadır.
+          </div>
+          {% else %}
+          <div class="mb-4">
+            <div class="alert alert-info">
+              <i class="bi bi-info-circle"></i> Toplam {{ recordings|length }}
+              kayıt bulundu.
+            </div>
+          </div>
+          <div class="row">
+            {% for recording in recordings %}
+            <div class="col-md-12">
+              <div class="card recording-card shadow-sm">
+                <div
+                  class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
+                >
+                  <h5 class="mb-0">Kayıt #{{ loop.index }}</h5>
+                  <small>{{ recording.timestamp }}</small>
+                </div>
+                <div class="card-body">
+                  <!-- Diyalog Metni Gösterimi -->
+                  <div class="mb-4">
+                    <h6 class="text-muted mb-3">Diyalog Metni:</h6>
+                    <div class="dialogue-display p-3 border rounded">
+                      {% if recording.dialogues %} {% for dialogue in
+                      recording.dialogues %}
+                      <div
+                        class="mb-2 {% if not loop.last %}border-bottom pb-2{% endif %}"
+                      >
+                        <div class="d-flex align-items-center mb-1">
+                          <strong class="me-2">{{ dialogue.speaker }}</strong>
+                          <span
+                            class="badge {% if dialogue.gender == 'male' %}bg-primary{% elif dialogue.gender == 'female' %}bg-danger{% else %}bg-secondary{% endif %}"
+                          >
+                            {% if dialogue.gender == 'male' %}Erkek{% elif
+                            dialogue.gender == 'female' %}Kadın{% else
+                            %}Bilinmiyor{% endif %}
+                          </span>
+                        </div>
+                        <p class="mb-2">{{ dialogue.text }}</p>
+
+                        <!-- Bireysel Ses Dosyası -->
+                        <div class="individual-audio mt-2">
+                          <div class="d-flex align-items-center">
+                            <span class="badge bg-secondary me-2"
+                              >Ses Kaydı</span
+                            >
+                            <audio
+                              controls
+                              class="w-100"
+                              controlsList="nodownload"
+                              style="height: 30px"
+                              onerror="this.parentElement.innerHTML = '<div class=\'alert alert-warning small py-1\'>Ses dosyası yüklenemedi</div>'"
+                            >
+                              <source
+                                src="/audio/{{ recording.session_id }}_{{ loop.index0 }}.mp3"
+                                type="audio/mpeg"
+                              />
+                            </audio>
+                          </div>
+                        </div>
+                      </div>
+                      {% endfor %} {% else %}
+                      <div class="alert alert-info mb-0">
+                        Bu kayıt için diyalog bilgisi bulunamadı.
+                      </div>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  <!-- Birleştirilmiş Ses Dosyası -->
+                  <div class="mt-4">
+                    <h6 class="text-muted mb-2">Tam Diyalog Ses Kaydı:</h6>
+                    <div class="mb-3">
+                      <button
+                        class="btn btn-primary mb-3 play-all-btn"
+                        data-recording-id="{{ recording.session_id }}"
+                      >
+                        <i class="bi bi-play-fill"></i> Tüm Diyalogları Sırayla
+                        Çal
+                      </button>
+                    </div>
+                    <audio
+                      controls
+                      class="w-100 mb-3"
+                      onerror="this.parentElement.innerHTML = '<div class=\'alert alert-danger\'>Ses dosyası yüklenemedi</div>'"
+                    >
+                      <source
+                        src="{{ recording.audio_url }}"
+                        type="audio/mpeg"
+                      />
+                      Tarayıcınız audio elementini desteklemiyor.
+                    </audio>
+
+                    <div class="text-end">
+                      <a
+                        href="{{ recording.audio_url }}"
+                        download
+                        class="btn btn-success"
+                      >
+                        <i class="bi bi-download"></i> İndir
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-footer text-muted">
+                  <small>Session ID: {{ recording.session_id }}</small>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Dark Mode Toggle
+      const themeToggle = document.getElementById("themeToggle");
+      const themeText = document.getElementById("themeText");
+      const themeIcon = themeToggle.querySelector("i");
+      const htmlElement = document.documentElement;
+
+      // Otomatik oynatma seçeneği
+      const autoPlayEnabled = true; // Otomatik oynatma için bu değeri true yapın
+
+      // Sayfa yüklendiğinde ilk kaydı otomatik oynat
+      document.addEventListener("DOMContentLoaded", function () {
+        if (autoPlayEnabled) {
+          // İlk kayıt varsa oynat
+          const firstRecording = document.querySelector(".recording-card");
+          if (firstRecording) {
+            const mainAudio = firstRecording.querySelector("audio");
+            if (mainAudio) {
+              // Birleştirilmiş ses dosyasını oynat
+              mainAudio.addEventListener("loadeddata", function () {
+                mainAudio
+                  .play()
+                  .catch((e) => console.log("Otomatik oynatma engellendi:", e));
+              });
+
+              // Ses bitince diyalogları sırayla çal
+              mainAudio.addEventListener("ended", function () {
+                const playAllBtn =
+                  firstRecording.querySelector(".play-all-btn");
+                if (playAllBtn) {
+                  playAllBtn.click();
+                }
+              });
+            }
+          }
+        }
+      });
+
+      // Kayıtlı tercihi kontrol et
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "dark") {
+        enableDarkMode();
+      }
+
+      themeToggle.addEventListener("click", () => {
+        if (htmlElement.getAttribute("data-bs-theme") === "dark") {
+          disableDarkMode();
+        } else {
+          enableDarkMode();
+        }
+      });
+
+      function enableDarkMode() {
+        htmlElement.setAttribute("data-bs-theme", "dark");
+        document.body.classList.add("dark-mode");
+        themeText.textContent = "Aydınlık Mod";
+        themeIcon.classList.remove("bi-moon-stars");
+        themeIcon.classList.add("bi-brightness-high");
+        localStorage.setItem("theme", "dark");
+      }
+
+      function disableDarkMode() {
+        htmlElement.setAttribute("data-bs-theme", "light");
+        document.body.classList.remove("dark-mode");
+        themeText.textContent = "Karanlık Mod";
+        themeIcon.classList.remove("bi-brightness-high");
+        themeIcon.classList.add("bi-moon-stars");
+        localStorage.setItem("theme", "light");
+      }
+
+      // Diyalogları göster/gizle butonları
+      document.querySelectorAll(".toggle-dialogues-btn").forEach((button) => {
+        button.addEventListener("click", function () {
+          const targetId = this.getAttribute("data-target");
+          const targetElement = document.getElementById(targetId);
+          if (targetElement.style.display === "none") {
+            targetElement.style.display = "block";
+          } else {
+            targetElement.style.display = "none";
+          }
+        });
+      });
+
+      // Diyalogları sırayla çalma özelliği
+      document.querySelectorAll(".play-all-btn").forEach((button) => {
+        button.addEventListener("click", function () {
+          // Bu kaydın ID'si
+          const recordingId = this.getAttribute("data-recording-id");
+
+          // Tüm ses oynatıcılarını seç
+          const audioPlayers = Array.from(
+            this.closest(".card-body").querySelectorAll(
+              ".individual-audio audio"
+            )
+          );
+
+          // Başlangıç değerleri
+          let currentPlayerIndex = 0;
+          const playBtn = this;
+
+          // İlk sesi oynat
+          if (audioPlayers.length > 0) {
+            playNextAudio();
+          }
+
+          // Sonraki sesi oynat
+          function playNextAudio() {
+            if (currentPlayerIndex >= audioPlayers.length) {
+              // Tüm sesler çalındı, butonu resetle
+              playBtn.innerHTML =
+                '<i class="bi bi-play-fill"></i> Tüm Diyalogları Sırayla Çal';
+              playBtn.disabled = false;
+              return;
+            }
+
+            // Oynatıcıyı al
+            const player = audioPlayers[currentPlayerIndex];
+
+            // Butonu güncelle
+            playBtn.innerHTML = `<i class="bi bi-pause-fill"></i> ${
+              currentPlayerIndex + 1
+            }/${audioPlayers.length} Oynatılıyor...`;
+            playBtn.disabled = true;
+
+            // Ses bitince sonrakine geç
+            player.onended = function () {
+              currentPlayerIndex++;
+              playNextAudio();
+            };
+
+            // Sesi çal
+            player.play();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
